@@ -177,6 +177,208 @@ td{padding:9px 12px}
 @media(max-width:1024px){#quadSvg{height:clamp(630px,75vh,810px)}.sum-grid{grid-template-columns:1fr}.sum-list{overflow-x:auto}.sum-list-head,.sum-item{min-width:820px;grid-template-columns:28px minmax(150px,1.6fr) minmax(104px,.95fr) minmax(76px,.66fr) minmax(96px,.82fr) minmax(76px,.66fr) minmax(90px,.78fr)}}
 @media(max-width:768px){#quadSvg{height:clamp(570px,68vh,690px)}.sum-list-head,.sum-item{min-width:760px;grid-template-columns:26px minmax(130px,1.5fr) minmax(96px,.92fr) minmax(72px,.62fr) minmax(90px,.8fr) minmax(72px,.62fr) minmax(84px,.74fr)}}
 @media(max-width:768px){.hdr,.ctrl,.main,.mth,.sts,.nav{padding-left:14px;padding-right:14px}.sc-row{flex-direction:column}.ctrl{flex-direction:column;align-items:stretch}.sbox{max-width:100%}.tn{max-width:160px}.src-item{flex-direction:column;gap:4px}.src-item .src-label{min-width:auto}}
+
+/* ── Visual polish ────────────────────────────────────────────── */
+:root{
+  --shadow-sm:0 2px 8px rgba(0,0,0,.3),0 1px 3px rgba(0,0,0,.2);
+  --shadow-md:0 4px 16px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.25);
+  --shadow-lg:0 12px 40px rgba(0,0,0,.55),0 4px 12px rgba(0,0,0,.3);
+}
+
+/* Header – subtle radial ambient + richer gradient text */
+.hdr{
+  background:radial-gradient(ellipse 80% 120% at 30% -10%,rgba(76,154,255,.07) 0%,transparent 70%),var(--bg);
+  border-bottom:1px solid rgba(255,255,255,.04);
+  padding:30px 32px 22px;
+}
+.hdr h1{
+  font-size:1.78rem;
+  background:linear-gradient(130deg,#68bfff 0%,#a898f8 42%,#34d399 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 24px rgba(76,154,255,.18));
+}
+.hdr p{font-size:.84rem;margin-top:5px;line-height:1.55}
+
+/* Nav – gradient underline for active tab */
+.nb{padding:12px 22px;letter-spacing:.01em}
+.nb.on{color:var(--blue);border-bottom-color:transparent;position:relative}
+.nb.on::after{
+  content:'';position:absolute;bottom:-1px;left:8px;right:8px;height:2px;
+  background:linear-gradient(90deg,var(--blue),var(--indigo));
+  border-radius:2px 2px 0 0;
+}
+
+/* Contact / tab callout cards – more vivid */
+.contact-note{
+  background:linear-gradient(150deg,rgba(124,108,240,.1) 0%,rgba(124,108,240,.04) 100%);
+  border:1px solid rgba(124,108,240,.3);
+  box-shadow:0 2px 12px rgba(124,108,240,.08);
+}
+.tab-summary{
+  background:linear-gradient(150deg,rgba(76,154,255,.09) 0%,rgba(76,154,255,.03) 100%);
+  border:1px solid rgba(76,154,255,.22);
+  box-shadow:0 2px 10px rgba(76,154,255,.06);
+}
+
+/* Stats bar – glowing dots */
+.st .d{width:8px;height:8px;box-shadow:0 0 0 2px rgba(255,255,255,.04)}
+.st .d.g{box-shadow:0 0 7px rgba(52,211,153,.45)}
+.st .d.r{box-shadow:0 0 7px rgba(248,113,113,.45)}
+.st .d.y{box-shadow:0 0 7px rgba(251,191,36,.45)}
+
+/* Search box */
+.sbox input{
+  background:rgba(13,17,23,.9);
+  border:1px solid var(--b1);
+  transition:.18s;
+}
+.sbox input:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(76,154,255,.14),inset 0 1px 3px rgba(0,0,0,.3);
+}
+
+/* Filter pill groups */
+.pg{box-shadow:var(--shadow-sm)}
+.pl.on{box-shadow:0 2px 8px rgba(76,154,255,.3)}
+.pg.cat .pl.on[data-c="B"]{box-shadow:0 2px 8px rgba(52,211,153,.3)}
+.pg.cat .pl.on[data-c="R"]{box-shadow:0 2px 8px rgba(248,113,113,.3)}
+.pg.cat .pl.on[data-c="N"]{box-shadow:0 2px 8px rgba(251,191,36,.3)}
+
+/* Main table wrapper */
+.tw{box-shadow:var(--shadow-md);border-color:rgba(255,255,255,.055)}
+
+/* Table header – slightly more contrast */
+thead th{
+  background:var(--s2);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:.72rem;
+  letter-spacing:.7px;
+}
+thead th:hover{color:var(--t1);background:var(--s3)}
+
+/* Row hover – blue tint */
+tbody tr:hover{background:rgba(76,154,255,.05)}
+/* Subtle zebra */
+tbody tr:nth-child(even){background:rgba(255,255,255,.011)}
+tbody tr:nth-child(even):hover{background:rgba(76,154,255,.055)}
+
+/* Badges – soft glow */
+.bg{letter-spacing:.4px}
+.bg.B{box-shadow:0 0 10px rgba(52,211,153,.15)}
+.bg.R{box-shadow:0 0 10px rgba(248,113,113,.15)}
+.bg.N{box-shadow:0 0 10px rgba(251,191,36,.15)}
+
+/* Score cards */
+.sc-box{
+  box-shadow:var(--shadow-sm);
+  transition:border-color .18s,box-shadow .18s,transform .18s;
+}
+.sc-box:hover{
+  border-color:var(--b2);
+  box-shadow:var(--shadow-md);
+  transform:translateY(-1px);
+}
+.sc-box .vl{background:linear-gradient(135deg,var(--t1) 0%,var(--t2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* Progress bars – gradient fill */
+.bt{background:rgba(255,255,255,.06);border-radius:3px}
+.bfa{background:linear-gradient(90deg,#f87171,#fb9090)}
+.bfg{background:linear-gradient(90deg,#34d399,#5fe8b4)}
+
+/* Scrollbar */
+.tsc::-webkit-scrollbar{width:5px}
+.tsc::-webkit-scrollbar-track{background:transparent}
+.tsc::-webkit-scrollbar-thumb{background:rgba(76,154,255,.18);border-radius:3px}
+.tsc::-webkit-scrollbar-thumb:hover{background:rgba(76,154,255,.38)}
+
+/* Quad chart card */
+.quad-card{
+  box-shadow:var(--shadow-md);
+  border-color:rgba(255,255,255,.055);
+  background:var(--s1);
+}
+.quad-tooltip{
+  background:rgba(10,16,28,.92);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 8px 30px rgba(0,0,0,.5);
+}
+
+/* Summary list items */
+.sum-item{
+  border-color:rgba(255,255,255,.04);
+  transition:border-color .15s,box-shadow .15s,transform .15s,background .15s;
+}
+.sum-item:hover{
+  border-color:rgba(76,154,255,.35);
+  background:rgba(76,154,255,.06);
+  box-shadow:0 2px 12px rgba(76,154,255,.12);
+  transform:translateY(-1px);
+}
+.sum-list-card{
+  box-shadow:var(--shadow-sm);
+  border-color:rgba(255,255,255,.05);
+}
+
+/* Legend chips */
+.sum-legend .lgd{
+  box-shadow:var(--shadow-sm);
+  backdrop-filter:blur(4px);
+}
+
+/* Detail panel */
+.pnl{
+  box-shadow:var(--shadow-lg);
+  border-color:rgba(255,255,255,.07);
+  background:linear-gradient(180deg,rgba(255,255,255,.015) 0%,var(--bg) 120px);
+}
+.pnl .x{transition:.15s}
+.pnl .x:hover{background:var(--s3);color:var(--t1);border-color:var(--b2)}
+
+/* Methodology */
+.mth-toc-item{
+  box-shadow:var(--shadow-sm);
+  border-color:rgba(255,255,255,.05);
+  transition:border-color .18s,box-shadow .18s,transform .18s,background .18s;
+}
+.mth-toc-item:hover{
+  box-shadow:0 4px 20px rgba(76,154,255,.18);
+  transform:translateY(-2px);
+  border-color:rgba(76,154,255,.3);
+}
+.mth h2{
+  background:linear-gradient(130deg,var(--blue),var(--indigo));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.mth .note{
+  background:rgba(76,154,255,.04);
+  border-left:3px solid var(--blue);
+  box-shadow:var(--shadow-sm);
+}
+.mth .fm{
+  box-shadow:var(--shadow-sm);
+  border-color:rgba(255,255,255,.06);
+}
+.src-item{
+  box-shadow:var(--shadow-sm);
+  border-color:rgba(255,255,255,.05);
+  transition:border-color .15s;
+}
+.src-item:hover{border-color:var(--b2)}
+
+/* Score chips */
+.score-chip{box-shadow:0 1px 5px rgba(0,0,0,.25)}
+
+/* External link button */
+.sl{
+  box-shadow:var(--shadow-sm);
+  transition:border-color .15s,background .15s,box-shadow .15s,transform .15s;
+}
+.sl:hover{
+  transform:translateY(-1px);
+  box-shadow:var(--shadow-md);
+}
+/* ── End polish ───────────────────────────────────────────────── */
 </style>
 </head>
 <body>
@@ -1296,7 +1498,7 @@ var SOCM={"11-0000":["Management Occupations",""],"11-1000":["Top Executives",""
       return items;
     }
     function labelSpec(p,kind){
-      var txt=trimLabel(p.n,24),est=Math.max(40,txt.length*5.1),x,anchor;
+      var txt=trimLabel(p.n,34),est=Math.max(40,txt.length*5.3),x,anchor;
       if(kind==='benefit'){
         x=p.cx+8; anchor='start';
         if(x+est>R-4){x=p.cx-8;anchor='end'}
