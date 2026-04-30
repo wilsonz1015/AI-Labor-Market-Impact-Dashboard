@@ -1,0 +1,5 @@
+Updated industry-data.js from latest workbook mapping
+Source workbook: Occupation_and_Industry_Mapping_v2_2.xlsx
+Occupation rows updated: 894
+Rows with changed NAICS and/or industry text: 747
+Fields updated per row: naics, industry, primaryIndustry, service

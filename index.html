@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-enabled Services Investing Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css?v=20260429b">
+</head>
+<body>
+<div class="hdr"><h1>AI-enabled Services Investing Explorer</h1><p>This dashboard provides an overview for priority sub-verticals to invest in across various professional services, combining data on AI augmentation on the industry, importance of human elements / judgement, as well as industry fundamentals</p></div>
+<div class="contact-note"><strong>Questions?</strong> Please direct any questions to Wilson Zhang at <a href="mailto:wilson.z1015@gmail.com" style="color:var(--blue);text-decoration:none">wilson.z1015@gmail.com</a> / <a href="https://www.linkedin.com/in/wilsonzhang10/" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none">https://www.linkedin.com/in/wilsonzhang10/</a>.</div>
+<div class="nav" id="nav"><button class="nb on" data-v="take">Key Takeaway for Investors</button><button class="nb" data-v="pri">Priority Industries for Investment</button><button class="nb" data-v="aiwc">AI vs. Work Context</button><button class="nb" data-v="tbl">AI Augmentation vs. Automation</button><button class="nb" data-v="wc">AI Resilience</button><button class="nb" data-v="ind">Industry Data</button><button class="nb" data-v="met">Methodology</button></div>
+<div id="vTake">
+<div class="main">
+  <div class="take-grid">
+    <div class="take-card">
+      <div class="sct">Key Takeaway</div>
+      <ul class="take-list">
+        <li>Healthcare Services as an industry is a major beneficiary of AI, due to AI's benefits to the providers' day-to-day activities, importance of continued human involvement, as well as fundamental industry demand</li>
+        <li>The data confirms some of the industries that early pioneers of AI roll-up strategies are focused on, for example IT Services (vis-a-vis Information Security Analysts), Tax Firms (vis-a-vis Tax Preparers)</li>
+        <li>It is important to invest in sub categories where humans have to apply judgement vs. performing administrative tasks, even though they might fall under the same general industry. For example, Human Resource Specialists (i.e., recruiters) are expected to benefit from AI while the impact for Human Resource Assistants is more muted, as HR assistants perform more administrative tasks</li>
+        <li>There are many facets / tasks beyond what we typically associate an occupation with. For example, athletic trainers are expected to benefit from AI: even though we typically think of their job as physically training athletes, a meaningful portion of their jobs is related to developing training regimes independently and preparing administrative reports</li>
+        <li>Certain industries are more resilient to AI than one might expect because of the importance of being accurate / high cost of failure, even though there might be secular headwind for those industries (e.g., Interpreters and Translators,  Travel Agents)</li>
+        <li>More occupations have reported augmentation usage for AI as opposed to automation usage to date, with majority of the occupations reporting no meaningful AI usage</li>
+      </ul>
+    </div>
+    <div class="take-card">
+      <div class="sct">Limitation of the Dashboard</div>
+      <ul class="take-list">
+        <li>The view for industries to invest in is based on data at the occupation level, and the exact sub-sectors to invest in might differ from what is listed under "Most Relevant Industry", which is based on matching NAICS with occupation code (e.g., IT Services might be the most investable sub-sector associated with Information Security Analyst, vs. broader industry for Computer System Design Services as suggested by the dashboard)</li>
+        <li>The industry attractiveness scorecard does not account for recession resilience. For example, real estate brokerage scores well for this dashboard even though its revenue source is quite cyclical</li>
+        <li>The industry attractiveness scorecard does not account for fragmentation of the market. For example, insurance sales agents / brokerage industry scores well for this dashboard even though the industry is somewhat consolidated after active PE activities in the last 10 years</li>
+        <li>The underlying AI usage data is inferred from task-level AI interaction classifications, so some prompts may reflect personal use rather than on-the-job use and can still be mapped to a professional occupation</li>
+        <li>AI usage is likely going to evolve as capabilities of the model improves; usage data in the dashboard is based on Anthropic published data on Claude chat usage in February 2026</li>
+      </ul>
+    </div>
+  </div>
+</div></div>
+<div id="vTbl" style="display:none">
+<div class="tab-summary"><b>AI Augmentation vs. Automation:</b> This tab shows which occupations appear most helped versus displaced by current AI use patterns, alongside task coverage and detailed task-level context.</div>
+<div class="ctrl">
+<div class="filter-row">
+<div class="sbox"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="qry" type="text" placeholder="Search occupations by name or O*NET code..."></div>
+<select id="mainPrimary"><option>Loading primary industries...</option></select>
+<select id="mainBenefit"><option value="all">All AI benefit categories</option><option value="B">Augmentation</option><option value="N">Neutral</option><option value="R">At Risk</option></select>
+</div>
+<div>
+  <div class="src-note" id="srcP"><strong>AI usage data</strong> = occupation-level AI task usage signal</div>
+</div>
+</div>
+<div class="sts" id="sts"></div>
+<div class="main">
+<div class="cnt" id="cnt"></div>
+<div class="tw"><div class="tsc"><table>
+<thead id="mainTh"><tr></tr></thead>
+<tbody id="tb"></tbody>
+</table></div></div>
+<a class="sl" href="https://www.onetonline.org/" target="_blank" rel="noopener" style="margin-top:20px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>O*NET Online</a>
+</div></div>
+
+
+<div id="vWc" style="display:none">
+<div class="tab-summary"><b>AI Resilience:</b> This tab shows which occupations appear more resilient to AI because the work depends more heavily on human interaction, judgment, accuracy, and consequences of failure.</div>
+<div class="ctrl">
+<div class="sbox"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="wcQry" type="text" placeholder="Search work context occupations by name or O*NET code..."></div>
+</div>
+<div class="main">
+<div class="cnt" id="wcCnt"></div>
+<div class="tw"><div class="tsc"><table>
+<thead id="wcTh"><tr></tr></thead>
+<tbody id="wcTb"></tbody>
+</table></div></div>
+</div></div>
+
+<div id="vAiWc" style="display:none">
+<div class="tab-summary"><b>AI vs. Work Context:</b> This tab shows where occupations sit at the intersection of AI upside and human-centered work requirements, helping separate stronger AI beneficiaries from more exposed roles.</div>
+<div class="ctrl">
+<div>
+  <div class="src-note" id="aiwcSrcP">Horizontal axis = AI augmentation vs. automation score. Vertical axis = AI Resilience. Hover any point for the occupation, and click a point to open the AI Resilience drill-down.</div>
+</div>
+</div>
+<div class="main">
+<div class="sum-head">
+  <div>
+    <div class="sct" style="margin-bottom:6px">AI vs. Work Context Quadrant</div>
+    <div class="scs" id="aiwcNote">Loading chart...</div>
+  </div>
+  <div class="sum-legend">
+    <div class="lgd"><span class="sw" style="background:var(--grn)"></span>Top AI tailwinds</div>
+    <div class="lgd"><span class="sw" style="background:var(--red)"></span>Top AI headwinds</div>
+    <div class="lgd"><span class="sw" style="background:var(--t2)"></span>All other occupations</div>
+  </div>
+</div>
+<div class="sum-wrap">
+  <div class="quad-card" id="aiwcCard">
+    <div class="quad-tooltip" id="aiwcTip"></div>
+    <svg id="aiwcSvg" viewBox="0 0 1200 620" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
+  <div class="sum-grid">
+    <div class="sum-list-card">
+      <div class="sct">Top 20 jobs that benefit from AI</div>
+      <div class="scs">Higher augmentation vs. automation score and higher AI Resilience. Columns show the AI score, AI z-score, resilience score, resilience z-score, and the combined z-score.</div>
+      <div class="sum-list" id="aiwcBenefit"></div>
+    </div>
+    <div class="sum-list-card">
+      <div class="sct">Top 20 jobs that suffer the most from AI</div>
+      <div class="scs">Lower augmentation vs. automation score and lower AI Resilience. Columns show the AI score, AI z-score, resilience score, resilience z-score, and the combined z-score. Lower combined z-scores indicate more downside exposure.</div>
+      <div class="sum-list" id="aiwcSuffer"></div>
+    </div>
+  </div>
+</div>
+</div></div>
+
+<div id="vMet" style="display:none"><div class="mth">
+<div class="mth-intro">
+  <div class="mth-kicker">Methodology</div>
+  <p>This dashboard combines occupation-level AI task usage patterns, O*NET task and work-context measures, and industry mapping and growth data to show where AI appears more likely to augment work, where displacement risk remains, and which occupation-led service verticals look most investable.</p>
+</div>
+
+<h2 id="met-contents">Contents</h2>
+<p>Use the links below to jump to the methodology for each visible dashboard tab.</p>
+<div class="mth-toc">
+  <a class="mth-toc-item" href="#met-ai-score"><strong>AI Augmentation vs. Automation</strong><span>Shows the occupation AI score using task-level AI interaction patterns, task importance, task frequency weights, and the human / physical task filter.</span></a>
+  <a class="mth-toc-item" href="#met-work-context"><strong>AI Resilience</strong><span>Shows the four O*NET work-context measures used to construct the AI Resilience score.</span></a>
+  <a class="mth-toc-item" href="#met-ai-vs-work-context"><strong>AI vs. Work Context</strong><span>Plots the occupation AI score against the Work Context AI Resilience score and ranks the strongest combined upside and downside occupations.</span></a>
+  <a class="mth-toc-item" href="#met-data-sources"><strong>Data Sources</strong><span>Lists the source datasets used to build the current dashboard.</span></a>
+</div>
+
+<section id="met-ai-score" class="mth-section">
+  <h2>AI Augmentation vs. Automation</h2>
+  <p>This tab estimates whether currently observed AI usage patterns for an occupation lean more toward augmenting work or automating work.</p>
+
+  <h3>Task-level AI score</h3>
+  <p>Each AI-exposed task receives a net score based on augmentation share minus automation share, scaled by O*NET task importance.</p>
+  <div class="fm">task_score = 100 x (augmentation_share - automation_share) x (importance - 1) / 4</div>
+  <p>Directive and Feedback Loop are grouped as automation. Task Iteration, Validation, and Learning are grouped as augmentation.</p>
+  <div class="fm">automation_share = Directive + Feedback Loop
+<br>augmentation_share = Task Iteration + Validation + Learning</div>
+
+  <h3>Human / physical task filter</h3>
+  <p>Tasks that still require embodied, in-person, hands-on, equipment-based, or live-service execution are treated as human / physical tasks. Those tasks remain visible in the drill-down, but their displayed AI score is forced to 0 so the occupation score focuses on tasks that current AI use can more plausibly reshape.</p>
+  <p>The current implementation uses a model-based classifier (Haiku 4.5) that reads each O*NET task statement against an operational rubric. A task is treated as human / physical if completing it end-to-end requires manipulating physical objects, materials, tools, machinery, or vehicles; touching, examining, or moving a person or animal; being bodily present at a specific work location; or live face-to-face presence where the embodied interaction is part of the work. Tasks that can plausibly be accomplished through writing, reading, analysis, software operation, or remote communication (phone, video, chat, email) are not treated as human / physical, even when the verbs sound hands-on (for example, "operate" software, "prepare" reports, or "interview" by telephone).</p>
+
+  <h3>Occupation-level AI score</h3>
+  <p>The occupation score is the frequency-weighted sum of score-eligible AI tasks, using each task’s O*NET frequency weight share in the occupation.</p>
+  <div class="fm">occupation_ai_score = Sum(task_score x task_frequency_weight_share)</div>
+  <p>A task contributes to the occupation score only if it is AI-exposed, not human / physical, has classified AI interaction data, and has a non-zero displayed task score.</p>
+
+  <h3>Coverage floor and sparse-task rule</h3>
+  <p>To avoid overinterpreting tiny pockets of AI exposure, the dashboard sets the occupation AI score to 0 when either condition below is true:</p>
+  <div class="fm">if eligible_ai_task_count &lt;= 1, occupation_ai_score = 0
+<br>if eligible_ai_task_coverage &lt; 10%, occupation_ai_score = 0</div>
+  <p>Here, eligible AI task coverage means score-eligible AI tasks divided by total occupation tasks.</p>
+  <a class="mth-jump" href="#met-contents">Back to contents</a>
+</section>
+
+<section id="met-work-context" class="mth-section">
+  <h2>AI Resilience</h2>
+  <p>This tab shows the four O*NET work-context measures used in the dashboard’s resilience lens.</p>
+  <div class="fm">AI_resilience = Average(Contact With Others,
+<br>Consequence of Error,
+<br>Impact of Decisions on Co-workers or Company Results,
+<br>Importance of Being Exact or Accurate)</div>
+  <p>Higher values indicate occupations with stronger interpersonal, precision, or consequence-sensitive work-context features that may be harder to fully substitute away.</p>
+  <a class="mth-jump" href="#met-contents">Back to contents</a>
+</section>
+
+<section id="met-ai-vs-work-context" class="mth-section">
+  <h2>AI vs. Work Context</h2>
+  <p>This tab plots each occupation using two scores already built elsewhere in the dashboard: the occupation AI augmentation-vs.-automation score on the x-axis and AI Resilience on the y-axis.</p>
+  <div class="fm">x-axis = occupation_ai_score
+<br>y-axis = AI_resilience</div>
+  <p>The top-benefit and top-suffer lists use the sum of standardized z-scores across those two axes.</p>
+  <div class="fm">combined_z = z(ai_score) + z(AI_resilience)</div>
+  <p>Higher combined z-scores indicate stronger combined upside across both dimensions. Lower combined z-scores indicate more combined downside.</p>
+  <a class="mth-jump" href="#met-contents">Back to contents</a>
+</section>
+
+<section id="met-data-sources" class="mth-section">
+  <h2>Data Sources</h2>
+  <div class="src-grid">
+    <div class="src-item"><div class="src-label">Anthropic Economic Index</div><div class="src-desc">Claude.ai consumer chat usage classified by O*NET task and interaction type.<br><a href="https://huggingface.co/datasets/Anthropic/EconomicIndex/tree/main/release_2026_03_24" target="_blank">huggingface.co/datasets/Anthropic/EconomicIndex</a></div></div>
+    <div class="src-item"><div class="src-label">O*NET Task Ratings</div><div class="src-desc">U.S. Department of Labor occupational database with task statements and ratings for importance, relevance, and frequency. The dashboard uses importance in task scoring and task frequency weight shares at the occupation level.<br><a href="https://www.onetcenter.org/dictionary/20.1/excel/task_ratings.html" target="_blank">onetcenter.org/dictionary/20.1/excel/task_ratings.html</a></div></div>
+    <div class="src-item"><div class="src-label">O*NET Work Context</div><div class="src-desc">Work-context measures used here for team interaction, public interaction, consequence of error, decision-making, and exactness / accuracy.<br><a href="https://www.onetcenter.org/dictionary/30.2/excel/work_context.html" target="_blank" rel="noopener">onetcenter.org/dictionary/30.2/excel/work_context.html</a></div></div>
+      <div class="src-item"><div class="src-label">Industry Data</div><div class="src-desc">Industry employment and wage reference tables used to support the industry mapping and growth fields shown in the dashboard.<br><a href="https://www.bls.gov/oes/tables.htm" target="_blank" rel="noopener">bls.gov/oes/tables.htm</a></div></div>
+  </div>
+  <p>All scores in this dashboard reflect observed current usage patterns, structural job characteristics, and industry reference data in the loaded datasets, not a forecast of ultimate AI capability or guaranteed job outcomes.</p>
+  <a class="mth-jump" href="#met-contents">Back to contents</a>
+</section>
+</div></div>
+
+<div class="ov" id="ov"><div class="pnl" id="pnl"></div></div>
+<script src="data/dashboard-data.js?v=20260424a"></script>
+<script src="data/occupation-descriptions.js?v=20260429a"></script>
+<script src="data/work-context-data.js?v=20260424a"></script>
+<script src="data/industry-data.js?v=20260425a"></script>
+<script src="assets/app.js?v=20260429b"></script>
+</body>
+</html>
