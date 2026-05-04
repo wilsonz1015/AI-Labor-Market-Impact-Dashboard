@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Explorer for Investing in AI-enabled Services</title>
+<title>AI-enabled Services Investing Explorer</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20260429b">
+<link rel="stylesheet" href="assets/styles.css?v=20260504b">
 </head>
 <body>
-<div class="hdr"><h1>Explorer for Investing in AI-enabled Services </h1><p>This dashboard provides an overview for priority sub-verticals to invest in across various professional services, combining data on AI augmentation on the industry, importance of human elements / judgement, as well as industry fundamentals</p></div>
+<div class="hdr"><h1>Explorer for Investing in AI-enabled Services</h1><p>This dashboard provides an overview for priority sub-verticals to invest in across various professional services, combining data on AI augmentation on the industry, importance of human elements / judgement, as well as industry fundamentals</p></div>
 <div class="contact-note"><strong>Questions?</strong> Please contact Wilson Zhang at <a href="mailto:wilson.z1015@gmail.com" style="color:var(--blue);text-decoration:none">wilson.z1015@gmail.com</a> / <a href="https://www.linkedin.com/in/wilsonzhang10/" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none">https://www.linkedin.com/in/wilsonzhang10/</a>.</div>
 <div class="nav" id="nav"><button class="nb on" data-v="take">Key Takeaway for Investors</button><button class="nb" data-v="pri">Priority Industries for Investment</button><button class="nb" data-v="aiwc">AI vs. Work Context</button><button class="nb" data-v="tbl">AI Augmentation vs. Automation</button><button class="nb" data-v="wc">AI Resilience</button><button class="nb" data-v="ind">Industry Data</button><button class="nb" data-v="met">Methodology</button></div>
 <div id="vTake">
@@ -32,7 +32,7 @@
         <li>The industry attractiveness scorecard does not account for recession resilience. For example, real estate brokerage scores well for this dashboard even though its revenue source is quite cyclical</li>
         <li>The industry attractiveness scorecard does not account for fragmentation of the market. For example, insurance sales agents / brokerage industry scores well for this dashboard even though the industry is somewhat consolidated after active PE activities in the last 10 years</li>
         <li>The underlying AI usage data is inferred from task-level AI interaction classifications, so some prompts may reflect personal use rather than on-the-job use and can still be mapped to a professional occupation</li>
-        <li>AI usage is likely going to evolve as capabilities of the model improve; usage data in the dashboard is based on Anthropic published data on Claude chat usage in February 2026</li>
+        <li>AI usage is likely going to evolve as capabilities of the model improves; usage data in the dashboard is based on Anthropic published data on Claude chat usage in February 2026</li>
       </ul>
     </div>
   </div>
@@ -44,9 +44,6 @@
 <div class="sbox"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="qry" type="text" placeholder="Search occupations by name or O*NET code..."></div>
 <select id="mainPrimary"><option>Loading primary industries...</option></select>
 <select id="mainBenefit"><option value="all">All AI benefit categories</option><option value="B">Augmentation</option><option value="N">Neutral</option><option value="R">At Risk</option></select>
-</div>
-<div>
-  <div class="src-note" id="srcP"><strong>AI usage data</strong> = occupation-level AI task usage signal</div>
 </div>
 </div>
 <div class="sts" id="sts"></div>
@@ -75,11 +72,6 @@
 
 <div id="vAiWc" style="display:none">
 <div class="tab-summary"><b>AI vs. Work Context:</b> This tab shows where occupations sit at the intersection of AI upside and human-centered work requirements, helping separate stronger AI beneficiaries from more exposed roles.</div>
-<div class="ctrl">
-<div>
-  <div class="src-note" id="aiwcSrcP">Horizontal axis = AI augmentation vs. automation score. Vertical axis = AI Resilience. Hover any point for the occupation, and click a point to open the AI Resilience drill-down.</div>
-</div>
-</div>
 <div class="main">
 <div class="sum-head">
   <div>
@@ -115,7 +107,7 @@
 <div id="vMet" style="display:none"><div class="mth">
 <div class="mth-intro">
   <div class="mth-kicker">Methodology</div>
-  <p>This dashboard combines occupation-level AI task usage patterns, O*NET task and work-context measures, and industry mapping and growth data to show where AI appears more likely to augment work, where displacement risk remains, and which occupation-led service verticals look most investable.</p>
+  <p>This dashboard combines occupation-level AI task usage patterns, O*NET task and work-context measures, and industry mapping, growth, and age data to show where AI appears more likely to augment work, where displacement risk remains, and which occupation-led service verticals look most investable.</p>
 </div>
 
 <h2 id="met-contents">Contents</h2>
@@ -182,10 +174,11 @@
   <div class="src-grid">
     <div class="src-item"><div class="src-label">Anthropic Economic Index</div><div class="src-desc">Claude.ai consumer chat usage classified by O*NET task and interaction type.<br><a href="https://huggingface.co/datasets/Anthropic/EconomicIndex/tree/main/release_2026_03_24" target="_blank">huggingface.co/datasets/Anthropic/EconomicIndex</a></div></div>
     <div class="src-item"><div class="src-label">O*NET Task Ratings</div><div class="src-desc">U.S. Department of Labor occupational database with task statements and ratings for importance, relevance, and frequency. The dashboard uses importance in task scoring and task frequency weight shares at the occupation level.<br><a href="https://www.onetcenter.org/dictionary/20.1/excel/task_ratings.html" target="_blank">onetcenter.org/dictionary/20.1/excel/task_ratings.html</a></div></div>
-    <div class="src-item"><div class="src-label">O*NET Work Context</div><div class="src-desc">Work-context measures used here for team interaction, public interaction, consequence of error, decision-making, and exactness / accuracy.<br><a href="https://www.onetcenter.org/dictionary/30.2/excel/work_context.html" target="_blank" rel="noopener">onetcenter.org/dictionary/30.2/excel/work_context.html</a></div></div>
+    <div class="src-item"><div class="src-label">O*NET Work Context</div><div class="src-desc">Work-context measures used here for contact with others, consequence of error, impact of decisions, and exactness / accuracy.<br><a href="https://www.onetcenter.org/dictionary/30.2/excel/work_context.html" target="_blank" rel="noopener">onetcenter.org/dictionary/30.2/excel/work_context.html</a></div></div>
       <div class="src-item"><div class="src-label">Industry Data</div><div class="src-desc">Industry employment and wage reference tables used to support the industry mapping and growth fields shown in the dashboard.<br><a href="https://www.bls.gov/oes/tables.htm" target="_blank" rel="noopener">bls.gov/oes/tables.htm</a></div></div>
+    <div class="src-item"><div class="src-label">Age by Occupation Data</div><div class="src-desc">User-provided occupation-level median age data for 2019, 2022, and 2025, including the reference-year range and change in median age.</div></div>
   </div>
-  <p>All scores in this dashboard reflect observed current usage patterns, structural job characteristics, and industry reference data in the loaded datasets, not a forecast of ultimate AI capability or guaranteed job outcomes.</p>
+  <p>All scores in this dashboard reflect observed current usage patterns, structural job characteristics, and industry / age reference data in the loaded datasets, not a forecast of ultimate AI capability or guaranteed job outcomes.</p>
   <a class="mth-jump" href="#met-contents">Back to contents</a>
 </section>
 </div></div>
@@ -194,7 +187,7 @@
 <script src="data/dashboard-data.js?v=20260424a"></script>
 <script src="data/occupation-descriptions.js?v=20260429a"></script>
 <script src="data/work-context-data.js?v=20260424a"></script>
-<script src="data/industry-data.js?v=20260425a"></script>
-<script src="assets/app.js?v=20260429b"></script>
+<script src="data/industry-data.js?v=20260504a"></script>
+<script src="assets/app.js?v=20260504b"></script>
 </body>
 </html>

@@ -86,7 +86,7 @@ function tObj(t,sk){
 function stats(){
   var b=0,r=0,n=0;
   for(var i=0;i<OCC.length;i++){var c=OCC[i][src].ct;if(c==="B")b++;else if(c==="R")r++;else n++}
-  document.getElementById("sts").innerHTML='<div class="st"><div class="d g"></div><b>'+b+'</b><span>Augmented</span></div><div class="st"><div class="d r"></div><b>'+r+'</b><span>At Risk</span></div><div class="st"><div class="d y"></div><b>'+n+'</b><span>Neutral</span></div><div class="st" style="margin-left:auto"><span>Data:</span> <b>AI usage data</b></div>'
+  document.getElementById("sts").innerHTML='<div class="st"><div class="d g"></div><b>'+b+'</b><span>Augmented</span></div><div class="st"><div class="d r"></div><b>'+r+'</b><span>At Risk</span></div><div class="st"><div class="d y"></div><b>'+n+'</b><span>Neutral</span></div>'
 }
 
 /* Main table columns config */
@@ -791,7 +791,7 @@ function renderAiWc(){
   if(!svg) return;
   var data=buildAiWcData();
   var note=document.getElementById('aiwcNote');
-  if(note) note.textContent='Highlighted labels stay inside the plot when there is room and move outside with guide lines when a quadrant gets crowded.';
+  if(note) note.textContent='Horizontal axis = AI augmentation vs. automation score. Vertical axis = AI Resilience. Hover any point for the occupation, and click a point to open the AI Resilience drill-down.';
   var ben=document.getElementById('aiwcBenefit'),suf=document.getElementById('aiwcSuffer');
   if(ben) ben.innerHTML=makeAiWcList(data.benefit,'benefit');
   if(suf) suf.innerHTML=makeAiWcList(data.suffer,'suffer');
@@ -1160,7 +1160,7 @@ showView((location.hash||'#tbl').replace('#',''));
     var svg=document.getElementById('aiwcSvg'); if(!svg) return;
     var data=buildAiWcData();
     var note=document.getElementById('aiwcNote');
-    if(note) note.textContent='Hover any highlighted point to see details and click to open the occupation drill-down.';
+    if(note) note.textContent='Horizontal axis = AI augmentation vs. automation score. Vertical axis = AI Resilience. Hover any point for the occupation, and click a point to open the AI Resilience drill-down.';
     var ben=document.getElementById('aiwcBenefit'),suf=document.getElementById('aiwcSuffer');
     if(ben) ben.innerHTML=makeAiWcList(data.benefit);
     if(suf) suf.innerHTML=makeAiWcList(data.suffer);
@@ -1292,7 +1292,7 @@ showView((location.hash||'#tbl').replace('#',''));
   var IND_OCC=(IDATA.occupationRows)||[];
   var IMETA=IDATA.meta||{};
 
-  var indQry='',indSort='industryGrowthScore',indSortDir=-1,indPrimary='';
+  var indQry='',indSort='industrialFundamentalScore',indSortDir=-1,indPrimary='';
   var priQry='',priSort='combinedInvestmentScore',priSortDir=-1,priPrimary='';
   var PRI_ROWS=[], PRI_MAP={}, PRI_MEDIAN_RES=0;
   var PRIMARY_LIST=(function(){
@@ -1315,6 +1315,9 @@ showView((location.hash||'#tbl').replace('#',''));
     return '$'+(n/div).toLocaleString(undefined,{maximumFractionDigits:1,minimumFractionDigits:abs>=1e3?1:0})+suffix;
   }
   function fmtPctSigned(v){ if(nil(v)) return '—'; var n=Number(v); if(!isFinite(n)) return esc(String(v)); return (n>=0?'+':'')+(n*100).toFixed(2)+'%'; }
+  function fmtAge(v){ if(nil(v)) return '—'; var n=Number(v); if(!isFinite(n)) return esc(String(v)); return n.toFixed(1); }
+  function fmtAgeChange(v){ if(nil(v)) return '—'; var n=Number(v); if(!isFinite(n)) return esc(String(v)); return (n>=0?'+':'')+n.toFixed(1)+' yrs'; }
+  function fmtRefYears(v){ return nil(v)?'—':esc(String(v)); }
   function compareMixed(a,b,key,dir){
     var va=a[key], vb=b[key], an=nil(va), bn=nil(vb);
     if(typeof va==='string' || typeof vb==='string'){
@@ -1341,29 +1344,36 @@ showView((location.hash||'#tbl').replace('#',''));
     for(var i=0;i<PRIMARY_LIST.length;i++) h+='<option value="'+esc(PRIMARY_LIST[i])+'"'+(PRIMARY_LIST[i]===selected?' selected':'')+'>'+esc(PRIMARY_LIST[i])+'</option>';
     return h;
   }
+  function industrialFundamentalForRow(r){
+    var v=Number(r&&r.industrialFundamentalScore);
+    if(isFinite(v)) return v;
+    var keys=['histEmploymentGrowthZ','histWageGrowthZ','projectedEmploymentGrowthZ','medianAge2025Z','medianAgeIncreaseZ'];
+    var s=0,n=0;
+    for(var i=0;i<keys.length;i++){ var z=Number(r&&r[keys[i]]); if(isFinite(z)){ s+=z; n++; } }
+    return n?s/n:0;
+  }
 
   function buildPriorityRows(){
     var base=[];
     for(var i=0;i<IND_OCC.length;i++) if(IND_OCC[i]) base.push(IND_OCC[i]);
-    var xs=[], ys=[], gs=[];
+    var xs=[], ys=[];
     for(var j=0;j<base.length;j++){
       var occStats=typeof occAdjusted==='function' ? occAdjusted(base[j].id) : null;
       var ai=occStats && isFinite(Number(occStats.s)) ? Number(occStats.s) : Number(base[j].aiScore);
-      var res=Number(base[j].aiResilience), gr=Number(base[j].industryGrowthScore);
+      var res=Number(base[j].aiResilience);
       if(isFinite(ai)) xs.push(ai);
       if(isFinite(res)) ys.push(res);
-      if(isFinite(gr)) gs.push(gr);
     }
-    var mx=localMean(xs), my=localMean(ys), mg=localMean(gs);
-    var sdx=localSd(xs,mx), sdy=localSd(ys,my), sdg=localSd(gs,mg);
+    var mx=localMean(xs), my=localMean(ys);
+    var sdx=localSd(xs,mx), sdy=localSd(ys,my);
     PRI_MEDIAN_RES=localMedian(ys);
     PRI_ROWS=[]; PRI_MAP={};
     for(var k=0;k<base.length;k++){
       var r=base[k];
       var occStats=typeof occAdjusted==='function' ? occAdjusted(r.id) : null;
       var ai2=occStats && isFinite(Number(occStats.s)) ? Number(occStats.s) : Number(r.aiScore);
-      var res2=Number(r.aiResilience), gr2=Number(r.industryGrowthScore);
-      ai2=isFinite(ai2)?ai2:0; res2=isFinite(res2)?res2:0; gr2=isFinite(gr2)?gr2:0;
+      var res2=Number(r.aiResilience), fund2=industrialFundamentalForRow(r);
+      ai2=isFinite(ai2)?ai2:0; res2=isFinite(res2)?res2:0; fund2=isFinite(fund2)?fund2:0;
       var row={
         id:r.id,
         occupation:r.occupation,
@@ -1376,24 +1386,29 @@ showView((location.hash||'#tbl').replace('#',''));
         histEmploymentGrowth:r.histEmploymentGrowth,
         histWageGrowth:r.histWageGrowth,
         projectedEmploymentGrowth:r.projectedEmploymentGrowth,
-        industryGrowthScore:gr2,
+        industryGrowthScore:r.industryGrowthScore,
+        industrialFundamentalScore:fund2,
+        medianAge2019:r.medianAge2019,
+        medianAge2022:r.medianAge2022,
+        medianAge2025:r.medianAge2025,
+        referenceIncreaseInAgeYears:r.referenceIncreaseInAgeYears,
+        medianAgeIncrease:r.medianAgeIncrease,
         aiScore:ai2,
         aiResilience:res2,
         aiScoreZ:sdx?(ai2-mx)/sdx:0,
         aiResilienceZ:sdy?(res2-my)/sdy:0,
-        industryGrowthScoreZ:sdg?(gr2-mg)/sdg:0,
         service:!!r.service,
         sparse:!!(occStats&&occStats.sparse)
       };
       row.gatedToZero = row.aiScoreZ<0;
-      row.combinedInvestmentScore = row.gatedToZero ? 0 : avg3(row.aiScoreZ,row.aiResilienceZ,row.industryGrowthScoreZ);
+      row.combinedInvestmentScore = row.gatedToZero ? 0 : avg3(row.aiScoreZ,row.aiResilienceZ,row.industrialFundamentalScore);
       PRI_ROWS.push(row); PRI_MAP[row.id]=row;
     }
     PRI_ROWS.sort(function(a,b){
       return (b.combinedInvestmentScore-a.combinedInvestmentScore)
         || (b.aiScore-a.aiScore)
         || (b.aiResilience-a.aiResilience)
-        || (b.industryGrowthScore-a.industryGrowthScore)
+        || (b.industrialFundamentalScore-a.industrialFundamentalScore)
         || compareMixed(a,b,'occupation',1);
     });
     for(var qi=0;qi<PRI_ROWS.length;qi++) PRI_ROWS[qi].rank=qi+1;
@@ -1420,14 +1435,14 @@ showView((location.hash||'#tbl').replace('#',''));
       var ind=document.createElement('div');
       ind.id='vInd'; ind.style.display='none';
       ind.innerHTML=''
-        +'<div class="tab-summary"><b>Industry Data:</b> This tab shows how each occupation maps into a target industry, along with the size and growth signals that help explain overall industry attractiveness.</div>'
-        +'<div class="ctrl"><div class="filter-row"><div class="sbox"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="indQry" type="text" placeholder="Search occupations, mapped industries, or NAICS codes..."></div><select id="indPrimary"><option>Loading primary industries...</option></select></div></div>'
+        +'<div class="tab-summary"><b>Industry Data:</b> This tab shows the industry fundamentals (mapped by occupation) by growth and labor shortage factor.</div>'
+        +'<div class="ctrl"><div class="filter-row ind-filter-row"><div class="sbox"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="indQry" type="text" placeholder="Search occupations, mapped industries, or NAICS codes..."></div><select id="indPrimary"><option>Loading primary industries...</option></select><div class="ls-note ind-data-note ind-filter-note"> — indicates data is not available from BLS data.</div></div></div>'
         +'<div class="sts" id="indCnt"></div>'
-        +'<div class="main"><div class="tw"><div class="tsc"><table><thead id="indTh"><tr></tr></thead><tbody id="indTb"></tbody></table></div></div></div>';
+        +'<div class="main"><div class="tw ind-table-wrap"><div class="tsc ind-tsc"><table class="industry-table"><thead id="indTh"><tr></tr></thead><tbody id="indTb"></tbody></table></div></div></div>';
       var pri=document.createElement('div');
       pri.id='vPri'; pri.style.display='none';
       pri.innerHTML=''
-        +'<div class="tab-summary"><b>Priority Industries for Investment:</b> This tab ranks occupation-led sub-verticals by combining AI augmentation, AI resilience, and industry growth into a single investment-oriented scorecard.</div>'
+        +'<div class="tab-summary"><b>Priority Industries for Investment:</b> This tab ranks sub-verticals by investment attractiveness in the age of AI, combining three lens (1) How much does AI augments the industry; (2) How resilient is the industry to technology shock / how critical human element is to the service delivery; (3) Industry fundamentals in terms of growth and labor shortage. More details for each element can be found in other tabs </div>'
         +'<div class="ctrl"><div class="filter-row"><div class="sbox"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="priQry" type="text" placeholder="Search occupations, mapped industries, or NAICS codes..."></div><select id="priPrimary"><option>Loading primary industries...</option></select></div></div>'
         +'<div class="sts" id="priCnt"></div>'
         +'<div class="main"><div class="tw"><div class="tsc"><table><thead id="priTh"></thead><tbody id="priTb"></tbody></table></div></div></div>';
@@ -1441,7 +1456,7 @@ showView((location.hash||'#tbl').replace('#',''));
   function patchMethodology(){
     var intro=document.querySelector('#vMet .mth-intro p');
     if(intro){
-      intro.textContent='This dashboard combines occupation-level AI task usage patterns, O*NET task and work-context measures, and industry mapping and growth data to show where AI appears more likely to augment work, where displacement risk remains, and which occupation-led service verticals look most investable.';
+      intro.textContent='This dashboard combines occupation-level AI task usage patterns, O*NET task and work-context measures, and industry mapping, growth, and age data to show where AI appears more likely to augment work, where displacement risk remains, and which occupation-led service verticals look most investable.';
     }
     var toc=document.querySelector('.mth-toc');
     if(toc){
@@ -1449,8 +1464,8 @@ showView((location.hash||'#tbl').replace('#',''));
         +'<a class="mth-toc-item" href="#met-priority-industries"><strong>Priority Industries for Investment</strong><span>Explains the combined investment scorecard used to rank the most attractive occupation-led sub-verticals.</span></a>'
         +'<a class="mth-toc-item" href="#met-ai-vs-work-context"><strong>AI vs. Work Context</strong><span>Plots the occupation AI score against the Work Context AI Resilience score and highlights the strongest combined upside and downside occupations.</span></a>'
         +'<a class="mth-toc-item" href="#met-ai-score"><strong>AI Augmentation vs. Automation</strong><span>Shows the occupation AI score using task-level AI interaction patterns, task importance, task frequency weights, and the human / physical task filter.</span></a>'
-        +'<a class="mth-toc-item" href="#met-work-context"><strong>AI Resilience</strong><span>Shows the five O*NET work-context measures used to construct the AI Resilience score.</span></a>'
-        +'<a class="mth-toc-item" href="#met-industry-data"><strong>Industry Data</strong><span>Explains how occupations are mapped into investable sub-verticals and how size and growth metrics are constructed.</span></a>'
+        +'<a class="mth-toc-item" href="#met-work-context"><strong>AI Resilience</strong><span>Shows the four O*NET work-context measures used to construct the AI Resilience score.</span></a>'
+        +'<a class="mth-toc-item" href="#met-industry-data"><strong>Industry Data</strong><span>Explains how occupations are mapped into investable sub-verticals and how size, growth, and age factors are constructed.</span></a>'
         +'<a class="mth-toc-item" href="#met-data-sources"><strong>Data Sources</strong><span>Lists the source datasets used to build the current dashboard.</span></a>';
     }
     var aiScore=document.getElementById('met-ai-score');
@@ -1465,9 +1480,9 @@ showView((location.hash||'#tbl').replace('#',''));
     var workContext=document.getElementById('met-work-context');
     if(workContext){
       var p=workContext.querySelector('p');
-      if(p) p.textContent="This tab shows the five O*NET work-context measures used in the dashboard's resilience lens.";
+      if(p) p.textContent="This tab shows the four O*NET work-context measures used in the dashboard's resilience lens.";
       var fm=workContext.querySelector('.fm');
-      if(fm) fm.innerHTML='AI_resilience = Average(Work Group or Team,<br>External Customers or Public,<br>Consequence of Error,<br>Decision Making,<br>Exactness / Accuracy)';
+      if(fm) fm.innerHTML='AI_resilience = Average(Contact With Others,<br>Consequence of Error,<br>Impact of Decisions on Co-workers or Company Results,<br>Importance of Being Exact or Accurate)';
     }
     var dataSection=document.getElementById('met-data-sources');
     if(dataSection){
@@ -1476,11 +1491,12 @@ showView((location.hash||'#tbl').replace('#',''));
         grid.innerHTML=''
           +'<div class="src-item"><div class="src-label">Anthropic Economic Index</div><div class="src-desc">Anthropic Economic Index usage data classified by O*NET task and interaction type.<br><a href="https://huggingface.co/datasets/Anthropic/EconomicIndex/tree/main/release_2026_03_24" target="_blank" rel="noopener">huggingface.co/datasets/Anthropic/EconomicIndex</a></div></div>'
           +'<div class="src-item"><div class="src-label">O*NET Task Ratings</div><div class="src-desc">U.S. Department of Labor occupational database with task statements and ratings for importance, relevance, and frequency. The dashboard uses importance in task scoring and task frequency weight shares at the occupation level.<br><a href="https://www.onetcenter.org/dictionary/20.1/excel/task_ratings.html" target="_blank" rel="noopener">onetcenter.org/dictionary/20.1/excel/task_ratings.html</a></div></div>'
-          +'<div class="src-item"><div class="src-label">O*NET Work Context</div><div class="src-desc">Work-context measures used here for team interaction, public interaction, consequence of error, decision-making, and exactness / accuracy.<br><a href="https://www.onetcenter.org/dictionary/30.2/excel/work_context.html" target="_blank" rel="noopener">onetcenter.org/dictionary/30.2/excel/work_context.html</a></div></div>'
-          +'<div class="src-item"><div class="src-label">Industry Data</div><div class="src-desc">Industry employment and wage reference tables used to support the industry mapping and growth fields shown in the dashboard.<br><a href="https://www.bls.gov/oes/tables.htm" target="_blank" rel="noopener">bls.gov/oes/tables.htm</a></div></div>';
+          +'<div class="src-item"><div class="src-label">O*NET Work Context</div><div class="src-desc">Work-context measures used here for contact with others, consequence of error, impact of decisions, and exactness / accuracy.<br><a href="https://www.onetcenter.org/dictionary/30.2/excel/work_context.html" target="_blank" rel="noopener">onetcenter.org/dictionary/30.2/excel/work_context.html</a></div></div>'
+          +'<div class="src-item"><div class="src-label">Industry Data</div><div class="src-desc">Industry employment and wage reference tables used to support the industry mapping and growth fields shown in the dashboard.<br><a href="https://www.bls.gov/oes/tables.htm" target="_blank" rel="noopener">bls.gov/oes/tables.htm</a></div></div>'
+          +'<div class="src-item"><div class="src-label">Age by Occupation Data</div><div class="src-desc">User-provided occupation-level median age data for 2019, 2022, and 2025, including the reference-year range and change in median age.</div></div>';
       }
       var p2=dataSection.querySelector('p');
-      if(p2) p2.textContent='All scores in this dashboard reflect observed current usage patterns, structural job characteristics, and industry reference data in the loaded datasets, not a forecast of ultimate AI capability or guaranteed job outcomes.';
+      if(p2) p2.textContent='All scores in this dashboard reflect observed current usage patterns, structural job characteristics, and industry / age reference data in the loaded datasets, not a forecast of ultimate AI capability or guaranteed job outcomes.';
     }
     if(dataSection && !document.getElementById('met-industry-data')){
       var s1=document.createElement('section');
@@ -1490,15 +1506,15 @@ showView((location.hash||'#tbl').replace('#',''));
         +'<p>Each occupation is mapped to a most relevant industry using the workbook&#39;s <code>Specific NAICS Index Match</code> field, along with a higher-level primary industry grouping used for filtering.</p>'
         +'<p>Estimated industry size is approximated with occupation-level wage pool data, using the latest average annual wage multiplied by the latest employment count available for the mapped occupation.</p>'
         +'<div class="fm">estimated_industry_size ≈ latest_average_salary × latest_employment</div>'
-        +'<p>The Industry Growth Score summarizes recent wage growth, recent employment growth, and projected employment growth into one directional view of industry fundamentals.</p>'
-        +'<div class="fm">industry_growth_score = Average(historical_employment_growth, historical_wage_growth, projected_employment_growth)</div>'
+        +'<p>The Industrial Fundamental Score summarizes recent wage growth, recent employment growth, projected employment growth, 2025 median age, and change in median age into one standardized view of industry fundamentals and labor shortage signals.</p>'
+        +'<div class="fm">industrial_fundamental_score = Average(z(historical_employment_growth), z(historical_wage_growth), z(projected_employment_growth), z(2025_median_age), z(increase_in_median_age))</div>'
         +'<a class="mth-jump" href="#met-contents">Back to contents</a>';
       var s2=document.createElement('section');
       s2.id='met-priority-industries'; s2.className='mth-section';
       s2.innerHTML=''
         +'<h2>Priority Industries for Investment</h2>'
-        +'<p>This scorecard treats each occupation-led sub-vertical as its own investment row, then combines AI augmentation, AI resilience, and industry growth into a single standardized ranking.</p>'
-        +'<div class="fm">combined_investment_score = Average(z(ai_augmentation_score), z(ai_resilience_score), z(industry_growth_score))</div>'
+        +'<p>This scorecard treats each occupation-led sub-vertical as its own investment row, then combines AI augmentation, AI resilience, and the Industrial Fundamental Score into a single standardized ranking.</p>'
+        +'<div class="fm">combined_investment_score = Average(z(ai_augmentation_score), z(ai_resilience_score), industrial_fundamental_score)</div>'
         +'<p>If an occupation&#39;s AI augmentation z-score is negative, the combined investment score is forced to 0 so the screen remains focused on AI-enabled services rather than AI-exposed headwinds.</p>'
         +'<div class="fm">if z(ai_augmentation_score) &lt; 0, combined_investment_score = 0</div>'
         +'<a class="mth-jump" href="#met-contents">Back to contents</a>';
@@ -1516,14 +1532,16 @@ showView((location.hash||'#tbl').replace('#',''));
   }
 
   var indCols=[
-    {k:'occupation',l:'Occupation',t:'O*NET occupation title.',s:'min-width:240px'},
-    {k:'industry',l:'Most Relevant Industry',t:'Mapped from the uploaded workbook\'s Specific NAICS Index Match column.',s:'min-width:280px'},
-    {k:'primaryIndustry',l:'Primary Industry',t:'Higher-level industry grouping used for filtering.',s:'min-width:180px'},
-    {k:'industrySize',l:'Est. Industry Size',t:'Estimated industry size approximated by the combined wage pool of the occupation level.'},
-    {k:'industryGrowthScore',l:'Industry Growth Score',t:'Equal-weight average of historical employment growth, historical wage growth, and projected employment growth.', main:true},
-    {k:'histEmploymentGrowth',l:'Historical Employment Growth',t:'2019–2024 OEWS employment CAGR.'},
-    {k:'histWageGrowth',l:'Historical Wage Growth',t:'2019–2024 OEWS wage CAGR.'},
-    {k:'projectedEmploymentGrowth',l:'Projected Employment Growth',t:'2024–2034 BLS projected employment CAGR.'}
+    {k:'occupation',l:'Occupation',t:'O*NET occupation title.',s:'width:18%'},
+    {k:'industry',l:'Most Relevant Industry',t:'Mapped from the uploaded workbook\'s Specific NAICS Index Match column.',s:'width:17%'},
+    {k:'primaryIndustry',l:'Primary Industry',t:'Higher-level industry grouping used for filtering.',s:'width:10%'},
+    {k:'industrySize',l:'Est. Industry Size',t:'Estimated industry size approximated by the combined wage pool of the occupation level.',s:'width:8%'},
+    {k:'industrialFundamentalScore',l:'Industrial Fundamental Score',t:'Average of standardized z-scores for historical employment growth, historical wage growth, projected employment growth, 2025 median age, and increase in median age.', main:true,s:'width:9%'},
+    {k:'histEmploymentGrowth',l:'Historical Employment Growth',t:'2019–2024 OEWS employment CAGR.',s:'width:8%'},
+    {k:'histWageGrowth',l:'Historical Wage Growth',t:'2019–2024 OEWS wage CAGR.',s:'width:7%'},
+    {k:'projectedEmploymentGrowth',l:'Projected Employment Growth',t:'2024–2034 BLS projected employment CAGR.',s:'width:8%'},
+    {k:'medianAge2025',l:'2025 Median Age',t:'2025 median age by occupation from the age source data.',s:'width:7%'},
+    {k:'medianAgeIncrease',l:'Increase in Median Age',t:'Change in median age by occupation over the available reference-year range.',s:'width:8%'}
   ];
 
   function renderGenericHeader(targetId, cols, sortKey, sortDir, fnName){
@@ -1554,7 +1572,7 @@ showView((location.hash||'#tbl').replace('#',''));
     h+='<div class="sc-row">';
     h+='<div class="sc-box"><div class="lb">AI Augmentation Score</div><div class="vl '+cls(occStats?occStats.s:r.aiScore)+'">'+fmtScore(occStats?occStats.s:r.aiScore)+'</div><div class="mt">Occupation-level AI augmentation vs. automation signal</div></div>';
     h+='<div class="sc-box"><div class="lb">AI Resilience Score</div><div class="vl '+resilienceCls(resRaw)+'">'+fmtNum(resRaw,2)+'</div><div class="mt">Above-median resilience scores are shown in green</div></div>';
-    h+='<div class="sc-box"><div class="lb">Industry Growth Score</div><div class="vl '+scoreClsPct(r.industryGrowthScore)+'">'+fmtPctSigned(r.industryGrowthScore)+'</div><div class="mt">Blend of historical wage, historical employment, and projected employment growth</div></div>';
+    h+='<div class="sc-box"><div class="lb">Industrial Fundamental Score</div><div class="vl '+scoreClsPct(r.industrialFundamentalScore)+'">'+fmtSigned2(r.industrialFundamentalScore)+'</div><div class="mt">Average of standardized growth and age / labor shortage factors</div></div>';
     h+='</div>';
     h+='<div class="sct" style="margin-top:12px">Industry Size / Wage Pool Detail</div>';
     h+='<div class="scs">Estimated industry size approximated by the combined wage pool of the occupation level.</div>';
@@ -1570,6 +1588,14 @@ showView((location.hash||'#tbl').replace('#',''));
     h+='<div class="sc-box"><div class="lb">Historical Employment Growth</div><div class="vl '+scoreClsPct(r.histEmploymentGrowth)+'">'+fmtPctSigned(r.histEmploymentGrowth)+'</div><div class="mt">2019–2024 OEWS employment CAGR</div></div>';
     h+='<div class="sc-box"><div class="lb">Historical Wage Growth</div><div class="vl '+scoreClsPct(r.histWageGrowth)+'">'+fmtPctSigned(r.histWageGrowth)+'</div><div class="mt">2019–2024 OEWS wage CAGR</div></div>';
     h+='<div class="sc-box"><div class="lb">Projected Employment Growth</div><div class="vl '+scoreClsPct(r.projectedEmploymentGrowth)+'">'+fmtPctSigned(r.projectedEmploymentGrowth)+'</div><div class="mt">2024–2034 BLS projection CAGR</div></div>';
+    h+='</div>';
+    h+='<div class="sct" style="margin-top:12px">Age by Occupation</div>';
+    h+='<div class="scs">Median age data is occupation-level and is used as part of the Industrial Fundamental Score.</div>';
+    h+='<div class="sc-row">';
+    h+='<div class="sc-box"><div class="lb">2019 Median Age</div><div class="vl">'+fmtAge(r.medianAge2019)+'</div></div>';
+    h+='<div class="sc-box"><div class="lb">2022 Median Age</div><div class="vl">'+fmtAge(r.medianAge2022)+'</div></div>';
+    h+='<div class="sc-box detail-em"><div class="lb">2025 Median Age</div><div class="vl">'+fmtAge(r.medianAge2025)+'</div></div>';
+    h+='<div class="sc-box"><div class="lb">Increase in Median Age</div><div class="vl '+scoreClsPct(r.medianAgeIncrease)+'">'+fmtAgeChange(r.medianAgeIncrease)+'</div><div class="mt">Reference: '+fmtRefYears(r.referenceIncreaseInAgeYears)+'</div></div>';
     h+='</div>';
     h+='<div class="contact-note pnl-contact-note"><strong>Questions?</strong> Please direct any questions to Wilson Zhang at <a href="mailto:wilson.z1015@gmail.com" style="color:var(--blue);text-decoration:none">wilson.z1015@gmail.com</a> / <a href="https://www.linkedin.com/in/wilsonzhang10/" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none">https://www.linkedin.com/in/wilsonzhang10/</a>.</div>';
     return h;
@@ -1610,10 +1636,12 @@ showView((location.hash||'#tbl').replace('#',''));
         +'<td><div>'+esc(r.industry)+'</div><div class="subcd">NAICS '+esc(r.naics||'—')+'</div></td>'
         +'<td>'+esc(r.primaryIndustry||'Unspecified')+'</td>'
         +'<td class="m">'+fmtMoneyCompact(r.industrySize)+'</td>'
-        +'<td class="m primary-col-cell '+scoreClsPct(r.industryGrowthScore)+'">'+fmtPctSigned(r.industryGrowthScore)+'</td>'
+        +'<td class="m primary-col-cell '+scoreClsPct(r.industrialFundamentalScore)+'">'+fmtSigned2(r.industrialFundamentalScore)+'</td>'
         +'<td class="m '+scoreClsPct(r.histEmploymentGrowth)+'">'+fmtPctSigned(r.histEmploymentGrowth)+'</td>'
         +'<td class="m '+scoreClsPct(r.histWageGrowth)+'">'+fmtPctSigned(r.histWageGrowth)+'</td>'
         +'<td class="m '+scoreClsPct(r.projectedEmploymentGrowth)+'">'+fmtPctSigned(r.projectedEmploymentGrowth)+'</td>'
+        +'<td class="m">'+fmtAge(r.medianAge2025)+'</td>'
+        +'<td class="m '+scoreClsPct(r.medianAgeIncrease)+'">'+fmtAgeChange(r.medianAgeIncrease)+'</td>'
         +'</tr>';
     }
     tb.innerHTML=h;
@@ -1632,10 +1660,10 @@ showView((location.hash||'#tbl').replace('#',''));
     h+=cell('Most Relevant Industry','industry','Mapped industry from the workbook\'s Specific NAICS Index Match column.','',1);
     h+=cell('Primary Industry','primaryIndustry','Higher-level industry grouping used for filtering.','',1);
     h+=cell('Est. Industry Size','industrySize','Estimated industry size approximated by the combined wage pool of the occupation level.','',1);
-    h+=cell('AI Augmentation Z-Score','aiScoreZ','Standardized AI augmentation score across all occupation rows.','group',1);
-    h+=cell('AI Resilience Z-Score','aiResilienceZ','Standardized AI resilience score across all occupation rows.','group',1);
-    h+=cell('Industry Growth Z-Score','industryGrowthScoreZ','Standardized growth score across all occupation rows.','group',1);
-    h+=cell('Combined Z-Score','combinedInvestmentScore','Equal-weight average of the three z-scores, forced to 0 only when the AI augmentation z-score is negative.','master',1);
+    h+=cell('AI Augmentation Z-Score','aiScoreZ','Standardized Z-score for AI\'s impact for each occupation, positive = augmentation-oriented, negative = automation-oriented','group',1);
+    h+=cell('AI Resilience Z-Score','aiResilienceZ','Standardized Z-score for how critical human interaction and judgement is to the job, positive = more resilient than average, negative = less resilient than average','group',1);
+    h+=cell('Industrial Fundamental Score','industrialFundamentalScore','Standardized Z-score for industry fundamentals (industry growth and labor shortage), positive = above average industry fundamentals, negative = below average industry fundamentals','group',1);
+    h+=cell('Combined Z-Score','combinedInvestmentScore','Equal-weight average of AI Augmentation Z-Score, AI Resilience Z-Score, and Industrial Fundamental Score, forced to 0 only when the AI augmentation z-score is negative.','master',1);
     h+='</tr>';
     thead.innerHTML=h;
   }
@@ -1649,11 +1677,11 @@ showView((location.hash||'#tbl').replace('#',''));
     h+='<div class="dc">'+esc(r.id)+' &middot; Priority Industries for Investment drill-down</div>';
     h+=(window.buildSocDescBox?window.buildSocDescBox(id,'Occupation description'):'');
     h+='<div class="sct" style="margin-top:12px">Score Breakdown</div>';
-    h+='<div class="scs">These cards show the raw values and z-scores that roll into the combined investment score, with the Combined Z-Score serving as the master ranking lens.</div>';
+    h+='<div class="scs">These cards show the raw values and standardized scores that roll into the combined investment score, with the Combined Z-Score serving as the master ranking lens.</div>';
     h+='<div class="sc-row">';
     h+='<div class="sc-box"><div class="lb">AI Augmentation Score</div><div class="vl '+cls(r.aiScore)+'">'+fmtScore(r.aiScore)+'</div><div class="mt">Z-score: '+fmtSigned2(r.aiScoreZ)+(r.sparse?' · zeroed for limited AI coverage':'')+'</div></div>';
     h+='<div class="sc-box"><div class="lb">AI Resilience Score</div><div class="vl '+resilienceCls(r.aiResilience)+'">'+fmtNum(r.aiResilience,2)+'</div><div class="mt">Z-score: '+fmtSigned2(r.aiResilienceZ)+'</div></div>';
-    h+='<div class="sc-box"><div class="lb">Industry Growth Score</div><div class="vl '+scoreClsPct(r.industryGrowthScore)+'">'+fmtPctSigned(r.industryGrowthScore)+'</div><div class="mt">Z-score: '+fmtSigned2(r.industryGrowthScoreZ)+'</div></div>';
+    h+='<div class="sc-box"><div class="lb">Industrial Fundamental Score</div><div class="vl '+scoreClsPct(r.industrialFundamentalScore)+'">'+fmtSigned2(r.industrialFundamentalScore)+'</div><div class="mt">Industry growth + labor shortage factors</div></div>';
     h+='<div class="sc-box detail-em"><div class="lb">Combined Z-Score</div><div class="vl '+cls(r.combinedInvestmentScore)+'">'+fmtSigned2(r.combinedInvestmentScore)+'</div><div class="mt">Rank #'+fmtInt(r.rank)+(r.gatedToZero?' · forced to 0 because AI augmentation z-score is negative':'')+'</div></div>';
     h+='</div>';
     if(occStats){
@@ -1675,12 +1703,14 @@ showView((location.hash||'#tbl').replace('#',''));
       h+='<div class="sc-box"><div class="lb">Exact or Accurate</div><div class="vl" style="font-size:1rem">'+wcMetricChip(wcMetric(w,'exact'))+'</div></div>';
       h+='</div>';
     }
-    h+='<div class="sct" style="margin-top:12px">Industry Growth Score Detail</div>';
-    h+='<div class="scs">The industry growth score combines the three growth components below for the mapped industry.</div>';
+    h+='<div class="sct" style="margin-top:12px">Industrial Fundamental Score Detail</div>';
+    h+='<div class="scs">The Industrial Fundamental Score averages standardized z-scores for the five industry growth and labor shortage factors below.</div>';
     h+='<div class="sc-row">';
     h+='<div class="sc-box"><div class="lb">Historical Employment Growth</div><div class="vl '+scoreClsPct(r.histEmploymentGrowth)+'">'+fmtPctSigned(r.histEmploymentGrowth)+'</div><div class="mt">2019–2024 OEWS employment CAGR</div></div>';
     h+='<div class="sc-box"><div class="lb">Historical Wage Growth</div><div class="vl '+scoreClsPct(r.histWageGrowth)+'">'+fmtPctSigned(r.histWageGrowth)+'</div><div class="mt">2019–2024 OEWS wage CAGR</div></div>';
     h+='<div class="sc-box"><div class="lb">Projected Employment Growth</div><div class="vl '+scoreClsPct(r.projectedEmploymentGrowth)+'">'+fmtPctSigned(r.projectedEmploymentGrowth)+'</div><div class="mt">2024–2034 BLS projection CAGR</div></div>';
+    h+='<div class="sc-box"><div class="lb">2025 Median Age</div><div class="vl">'+fmtAge(r.medianAge2025)+'</div><div class="mt">Occupation-level median age</div></div>';
+    h+='<div class="sc-box"><div class="lb">Increase in Median Age</div><div class="vl '+scoreClsPct(r.medianAgeIncrease)+'">'+fmtAgeChange(r.medianAgeIncrease)+'</div><div class="mt">Reference: '+fmtRefYears(r.referenceIncreaseInAgeYears)+'</div></div>';
     h+='</div>';
     h+='<div class="sct" style="margin-top:12px">Mapped Industry and Est. Industry Size</div>';
     h+='<div class="scs">This view treats the occupation as its own mapped industry row for now, using the workbook\'s Specific NAICS Index Match field.</div>';
@@ -1733,7 +1763,7 @@ showView((location.hash||'#tbl').replace('#',''));
         +'<td class="m">'+fmtMoneyCompact(r.industrySize)+'</td>'
         +'<td class="m '+cls(r.aiScoreZ)+'">'+fmtSigned2(r.aiScoreZ)+'</td>'
         +'<td class="m '+cls(r.aiResilienceZ)+'">'+fmtSigned2(r.aiResilienceZ)+'</td>'
-        +'<td class="m '+cls(r.industryGrowthScoreZ)+'">'+fmtSigned2(r.industryGrowthScoreZ)+'</td>'
+        +'<td class="m '+cls(r.industrialFundamentalScore)+'">'+fmtSigned2(r.industrialFundamentalScore)+'</td>'
         +'<td class="m master-col '+cls(r.combinedInvestmentScore)+'"><b>'+fmtSigned2(r.combinedInvestmentScore)+'</b>'+(r.gatedToZero?'<div class="subcd">AI floor</div>':'')+'</td>'
         +'</tr>';
     }
